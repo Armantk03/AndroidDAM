@@ -1,0 +1,36 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Tema personalizado para la app -->
+    <style name="Theme.SimarroPop.Custom" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Colores personalizados -->
+        <item name="colorPrimary">#4CAF50</item>
+        <item name="colorPrimaryVariant">#388E3C</item>
+        <item name="colorSecondary">#03A9F4</item>
+        <item name="colorAccent">#FF5722</item>
+        <item name="android:statusBarColor">#388E3C</item>
+        <item name="android:windowBackground">#FFFFFF</item>
+
+        <!-- Tipografía personalizada
+        <item name="android:fontFamily">@font/poppins</item>
+        -->
+        <!-- Estilo de botones y controles -->
+        <item name="buttonStyle">@style/Widget.Button.Custom</item>
+    </style>
+
+    <!-- Tema oscuro -->
+    <style name="Theme.SimarroPop.Custom.Dark" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#121212</item>
+        <item name="colorPrimaryVariant">#1E1E1E</item>
+        <item name="colorSecondary">#BB86FC</item>
+        <item name="colorAccent">#FF5722</item>
+        <item name="android:windowBackground">#121212</item>
+        <!-- Tipografía personalizada
+        <item name="android:fontFamily">@font/poppins</item>
+        -->
+    </style>
+
+    <!-- Estilo personalizado para botones -->
+    <style name="Widget.Button.Custom" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">#4CAF50</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+</resources>
