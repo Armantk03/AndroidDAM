@@ -15,15 +15,6 @@ data class Producto(
     val imagenUrl: String? = null // Campo opcional para manejar imágenes
 )
 
-@Entity
-data class Usuario(
-    val id: Int,
-    val nombre: String,
-    val correo: String,
-    val contrasenya: String,
-    val numTelefono: String,
-    val premium: Boolean
-)
 
 data class Categoria(
     val id: Int,

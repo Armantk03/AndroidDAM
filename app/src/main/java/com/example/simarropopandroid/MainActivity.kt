@@ -1,8 +1,5 @@
 package com.example.simarropopandroid
 
-
-
-
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -13,7 +10,11 @@ import androidx.fragment.app.Fragment
 import com.example.simarropopandroid.databinding.ActivityMainBinding
 import com.example.simarropopandroid.databinding.FragmentHomeBinding
 import com.example.simarropopandroid.fragments.*
+import com.example.simarropopandroid.repository.UsuarioRepository
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -28,6 +29,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding = ActivityMainBinding.inflate(layoutInflater)
         _binding = FragmentHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Descargar y guardar usuarios en Room al iniciar
+        CoroutineScope(Dispatchers.IO).launch {
+            UsuarioRepository(applicationContext).obtenerUsuarios()
+        }
 
         // Configurar la Toolbar
         setSupportActionBar(binding.toolbar)
@@ -50,7 +56,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             binding.navigationView.setCheckedItem(R.id.nav_home)
         }
 
-
         _binding.fabAgregarProducto.setOnClickListener {
             val fragment = AgregarProductoFragment()
             supportFragmentManager.beginTransaction()
@@ -58,17 +63,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .addToBackStack(null)
                 .commit()
         }
-
-
     }
 
     // Manejar la selección de elementos en el NavigationView
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> replaceFragment(HomeFragment(), "Inicio")
-            R.id.nav_usuario -> replaceFragment(UsuarioFragment(), "com.example.simarropopandroid.model.Usuario")
+            R.id.nav_usuario -> replaceFragment(UsuarioFragment(), "Usuario")
             R.id.nav_deseados -> replaceFragment(DeseadosFragment(), "Deseados")
-
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START) // Cerrar el menú lateral
         return true
@@ -91,5 +93,3 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 }
-
-

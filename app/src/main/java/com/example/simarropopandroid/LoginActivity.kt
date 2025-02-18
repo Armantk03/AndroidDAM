@@ -5,36 +5,39 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.simarropopandroid.database.AppDatabase
 import com.example.simarropopandroid.databinding.ActivityLoginBinding
+import com.example.simarropopandroid.modelos.Usuario
+import com.example.simarropopandroid.repository.UsuarioRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var usuarioRepository: UsuarioRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inicializar ViewBinding
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inicializar SharedPreferences
         sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE)
+        usuarioRepository = UsuarioRepository(applicationContext)
 
-        // Si el usuario ya está autenticado, redirigir a MainActivity
         if (sharedPreferences.getBoolean("isLoggedIn", false)) {
             goToMainActivity()
         }
 
-        // Manejar el botón de inicio de sesión
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString()
             val password = binding.etPassword.text.toString()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                sharedPreferences.edit().putBoolean("isLoggedIn", true).apply()
-                goToMainActivity()
+                iniciarSesion(email, password)
             } else {
                 binding.tvErrorMessage.text = "Por favor, completa todos los campos"
                 binding.tvErrorMessage.visibility = View.VISIBLE
@@ -42,8 +45,24 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun iniciarSesion(correo: String, contrasenya: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val usuario = usuarioRepository.iniciarSesion(correo, contrasenya)
+            if (usuario != null) {
+                sharedPreferences.edit()
+                    .putBoolean("isLoggedIn", true)
+                    .putInt("userId", usuario.id)
+                    .apply()
+                goToMainActivity()
+            } else {
+                binding.tvErrorMessage.text = "Correo o contraseña incorrectos"
+                binding.tvErrorMessage.visibility = View.VISIBLE
+            }
+        }
+    }
+
     private fun goToMainActivity() {
         startActivity(Intent(this, MainActivity::class.java))
-        finish() // Cierra LoginActivity para que no pueda volver atrás
+        finish()
     }
 }
