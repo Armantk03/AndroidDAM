@@ -1,49 +1,43 @@
 package com.example.simarropopandroid.repository
 
 import android.content.Context
-import com.example.simarropopandroid.database.AppDatabase
 import com.example.simarropopandroid.modelos.UsuarioApi
-import com.example.simarropopandroid.modelos.UsuarioEntity
 import com.example.simarropopandroid.network.RetrofitClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.awaitResponse
 
 class UsuarioRepository(context: Context) {
-    private val usuarioDao = AppDatabase.getDatabase(context).usuarioDao()
     private val usuarioApi = RetrofitClient.usuarioApi
 
-    suspend fun obtenerUsuarios(): List<UsuarioEntity> {
+    // 🔍 Validar credenciales recorriendo todos los usuarios
+    suspend fun iniciarSesionDesdeApi(correo: String, contrasenya: String): UsuarioApi? {
         return withContext(Dispatchers.IO) {
             try {
                 val response = usuarioApi.obtenerUsuarios().awaitResponse()
                 if (response.isSuccessful) {
-                    response.body()?.let { usuarios ->
-                        val usuariosEntity = usuarios.map { it.toUsuarioEntity() }
-                        usuarioDao.insertarUsuarios(usuariosEntity)
-                        return@withContext usuariosEntity
+                    val usuarios = response.body() ?: emptyList()
+                    usuarios.find {
+                        it.correo.trim() == correo.trim() && it.contrasenya.trim() == contrasenya.trim()
                     }
+                } else {
+                    null
                 }
-                usuarioDao.obtenerUsuarios()
             } catch (e: Exception) {
-                usuarioDao.obtenerUsuarios()
+                null
             }
         }
     }
 
-    suspend fun iniciarSesion(correo: String, contrasenya: String): UsuarioEntity? {
+    suspend fun obtenerUsuarios(): List<UsuarioApi> {
         return withContext(Dispatchers.IO) {
-            usuarioDao.iniciarSesion(correo, contrasenya)
+            val response = usuarioApi.obtenerUsuarios().awaitResponse()
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
         }
     }
-}
 
-// Función de conversión
-fun UsuarioApi.toUsuarioEntity() = UsuarioEntity(
-    id = id,
-    nombre = "",
-    correo = "",
-    contrasenya = "",
-    numTelefono = "",
-    premium = false
-)
+}

@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.simarropopandroid.modelos.UsuarioEntity // Import correcto
+import com.example.simarropopandroid.modelos.UsuarioEntity
 
-@Database(entities = [UsuarioEntity::class], version = 1, exportSchema = false)
+@Database(entities = [UsuarioEntity::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao
 
@@ -20,7 +20,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
-                ).build()
+                ).fallbackToDestructiveMigration() // 💡 Will reset DB if schema changes
+                    .build()
                 INSTANCE = instance
                 instance
             }

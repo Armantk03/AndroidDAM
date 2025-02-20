@@ -16,6 +16,7 @@ import com.example.simarropopandroid.modelos.Foto
 import com.example.simarropopandroid.modelos.Producto
 import com.example.simarropopandroid.network.RetrofitClient
 import com.example.simarropopandroid.modelos.UsuarioApi
+import com.example.simarropopandroid.modelos.UsuarioReferencia
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -86,6 +87,7 @@ class AgregarProductoFragment : Fragment() {
         val categoriaSeleccionada = categoriasList[binding.spinnerCategoria.selectedItemPosition]
 
         if (nombre.isNotEmpty() && descripcion.isNotEmpty() && ubicacion.isNotEmpty() && imageUri != null) {
+            val idUsuario = obtenerIdUsuario()
             val producto = Producto(
                 id = null,
                 nombre = nombre,
@@ -94,9 +96,10 @@ class AgregarProductoFragment : Fragment() {
                 precio = precio,
                 ubicacion = ubicacion,
                 deseado = false,
-                usuario = UsuarioApi(id = 1),  // SOLO ID
-                categoria = Categoria(id = categoriaSeleccionada.id, nombre = "", descripcion = "")
+                usuario = UsuarioReferencia(id = obtenerIdUsuario()),  // 🔄 Nuevo modelo
+                categoria = categoriaSeleccionada
             )
+
 
             RetrofitClient.instance.registrarProducto(producto).enqueue(object : Callback<Producto> {
                 override fun onResponse(call: Call<Producto>, response: Response<Producto>) {
@@ -142,7 +145,14 @@ class AgregarProductoFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error al guardar la foto: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+
+
     }
+    private fun obtenerIdUsuario(): Int {
+        val sharedPreferences = requireActivity().getSharedPreferences("UserSession", android.content.Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("userId", -1) // -1 si no hay valor
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

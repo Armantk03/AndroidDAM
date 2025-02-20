@@ -11,7 +11,7 @@ interface UsuarioDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertarUsuarios(usuarios: List<UsuarioEntity>)
 
-    @Query("SELECT * FROM usuarios WHERE correo = :correo AND contrasenya = :contrasenya LIMIT 1")
+    @Query("SELECT * FROM usuarios WHERE TRIM(LOWER(correo)) = TRIM(LOWER(:correo)) AND TRIM(contrasenya) = TRIM(:contrasenya) LIMIT 1")
     suspend fun iniciarSesion(correo: String, contrasenya: String): UsuarioEntity?
 
     @Query("SELECT * FROM usuarios")

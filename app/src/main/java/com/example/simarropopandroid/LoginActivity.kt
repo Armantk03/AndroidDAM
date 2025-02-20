@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.simarropopandroid.databinding.ActivityLoginBinding
-import com.example.simarropopandroid.modelos.UsuarioEntity
 import com.example.simarropopandroid.repository.UsuarioRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +19,6 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -46,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun iniciarSesion(correo: String, contrasenya: String) {
         CoroutineScope(Dispatchers.Main).launch {
-            val usuario: UsuarioEntity? = usuarioRepository.iniciarSesion(correo, contrasenya)
+            val usuario = usuarioRepository.iniciarSesionDesdeApi(correo, contrasenya)
             if (usuario != null) {
                 sharedPreferences.edit()
                     .putBoolean("isLoggedIn", true)

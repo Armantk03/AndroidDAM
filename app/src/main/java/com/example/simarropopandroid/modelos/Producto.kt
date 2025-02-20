@@ -8,7 +8,7 @@ data class Producto(
     val precio: Long,
     val ubicacion: String,
     val deseado: Boolean,
-    val usuario: UsuarioApi, // Usar UsuarioApi en lugar de UsuarioEntity
+    val usuario: UsuarioReferencia,  // 🔄 Cambiado a UsuarioReferencia
     val categoria: Categoria,
     val imagenUrl: String? = null
 )

@@ -1,6 +1,7 @@
 package com.example.simarropopandroid
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Descargar y guardar usuarios en Room al iniciar
         CoroutineScope(Dispatchers.IO).launch {
             UsuarioRepository(applicationContext).obtenerUsuarios()
+            Log.d("MAIN_ACTIVITY", "Usuarios descargados e insertados en Room")
         }
 
         // Configurar la Toolbar

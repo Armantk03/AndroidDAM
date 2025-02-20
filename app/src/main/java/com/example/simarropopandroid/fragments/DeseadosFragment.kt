@@ -11,6 +11,7 @@ import com.example.simarropopandroid.databinding.FragmentDeseadosBinding
 import com.example.simarropopandroid.modelos.Producto
 import com.example.simarropopandroid.modelos.UsuarioApi
 import com.example.simarropopandroid.modelos.Categoria
+import com.example.simarropopandroid.modelos.UsuarioReferencia
 
 class DeseadosFragment : Fragment() {
 
@@ -29,7 +30,7 @@ class DeseadosFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // ✅ Usamos UsuarioApi, que solo contiene el ID
-        val usuarioEjemplo = UsuarioApi(id = 1)
+        val usuarioEjemplo = UsuarioReferencia(id = 1)
         val categoriaEjemplo = Categoria(id = 1, nombre = "Electrónica", descripcion = "Dispositivos y gadgets")
 
         // ✅ Lista de productos deseados (simulación de API)
