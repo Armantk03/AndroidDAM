@@ -4,6 +4,10 @@
 
     <!-- PERMISO PARA ACCEDER A INTERNET -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+
 
     <!-- PERMISO PARA PERMITIR HTTP SI LA API NO USA HTTPS -->
     <application
@@ -17,6 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SimarroPop.Custom"
         tools:targetApi="31">
+        <!-- Dentro de <application> -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDoL-5187kouz3xEFATNlbuHCmo6Ywnh_Q" />
 
         <!-- LoginActivity ahora es la pantalla principal -->
         <activity

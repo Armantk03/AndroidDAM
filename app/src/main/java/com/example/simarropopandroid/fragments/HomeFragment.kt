@@ -1,5 +1,6 @@
 package com.example.simarropopandroid.fragments
 
+import ProductoAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.simarropopandroid.R
-import com.example.simarropopandroid.adapters.ProductoAdapter
 import com.example.simarropopandroid.databinding.FragmentHomeBinding
 import com.example.simarropopandroid.modelos.Producto
 import com.example.simarropopandroid.network.RetrofitClient

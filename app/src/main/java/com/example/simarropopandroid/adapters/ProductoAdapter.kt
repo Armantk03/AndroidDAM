@@ -1,5 +1,4 @@
-package com.example.simarropopandroid.adapters
-
+import DetalleProductoFragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.simarropopandroid.R
 import com.example.simarropopandroid.databinding.ItemProductoBinding
-import com.example.simarropopandroid.fragments.DetalleProductoFragment
 import com.example.simarropopandroid.modelos.Producto
 
 class ProductoAdapter(
@@ -24,9 +22,8 @@ class ProductoAdapter(
             binding.productName.text = producto.nombre
             binding.productPrice.text = "€${producto.precio}"
 
-            // Cargar imagen con Glide, manejar null y errores
             Glide.with(binding.root.context)
-                .load(producto.imagenUrl ?: "https://via.placeholder.com/150") // Imagen de prueba si es null
+                .load(producto.imagenUrl ?: "https://via.placeholder.com/150")
                 .placeholder(R.drawable.ic_placeholder)
                 .into(binding.productImage)
 
@@ -37,12 +34,12 @@ class ProductoAdapter(
                         putString("precio", producto.precio.toString())
                         putString("descripcion", producto.descripcion)
                         putString("imagenUrl", producto.imagenUrl)
-                        putInt("idUsuario", producto.usuario.id) // 💡 ID del usuario
+                        putString("ubicacion", producto.ubicacion)  // 📍 Añadimos la ubicación
+                        putInt("idUsuario", producto.usuario.id)
                     }
                 }
                 loadFragment(fragment, fragmentManager)
             }
-
         }
 
         private fun loadFragment(fragment: Fragment, fragmentManager: FragmentManager) {
