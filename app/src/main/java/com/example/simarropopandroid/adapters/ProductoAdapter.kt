@@ -37,10 +37,12 @@ class ProductoAdapter(
                         putString("precio", producto.precio.toString())
                         putString("descripcion", producto.descripcion)
                         putString("imagenUrl", producto.imagenUrl)
+                        putInt("idUsuario", producto.usuario.id) // 💡 ID del usuario
                     }
                 }
                 loadFragment(fragment, fragmentManager)
             }
+
         }
 
         private fun loadFragment(fragment: Fragment, fragmentManager: FragmentManager) {

@@ -4,6 +4,7 @@ import com.example.simarropopandroid.modelos.Categoria
 import com.example.simarropopandroid.modelos.Foto
 import com.example.simarropopandroid.modelos.Producto
 import com.example.simarropopandroid.modelos.UsuarioApi
+import com.example.simarropopandroid.modelos.ValoracionResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -22,5 +23,16 @@ interface ApiService {
         @Path("idProducto") idProducto: Int,
         @Body foto: Foto
     ): Call<Foto>
+
+    @POST("usuarios")
+    fun registrarUsuario(@Body usuario: UsuarioApi): Call<UsuarioApi>
+
+    @GET("valoraciones/{idUsuario}")
+    fun obtenerValoracion(@Path("idUsuario") idUsuario: Int): Call<ValoracionResponse>
+
+
+
+
+
 }
 

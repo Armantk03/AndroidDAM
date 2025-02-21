@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 // ✅ Usuario para la API con todos los campos necesarios
 data class UsuarioApi(
-    val id: Int,
+    val id: Int? = null,
     val nombre: String,
     val correo: String,
     val contrasenya: String,
