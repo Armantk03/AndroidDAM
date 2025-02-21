@@ -2,6 +2,8 @@ package com.example.simarropopandroid.fragments
 
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +12,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import com.example.simarropopandroid.R
 import com.example.simarropopandroid.adapters.ProductoAdapter
 import com.example.simarropopandroid.databinding.FragmentHomeBinding
@@ -44,6 +45,15 @@ class HomeFragment : Fragment() {
         cargarCategorias()
         cargarProductos()
 
+        // 📝 Escuchar cambios en el campo de búsqueda
+        binding.searchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filtrarProductosPorNombre(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         binding.fabAgregarProducto.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.container, AgregarProductoFragment())
@@ -62,7 +72,6 @@ class HomeFragment : Fragment() {
                     Toast.makeText(requireContext(), "Error al obtener categorías", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<List<Categoria>>, t: Throwable) {
                 Toast.makeText(requireContext(), "Error de conexión al cargar categorías", Toast.LENGTH_SHORT).show()
             }
@@ -127,17 +136,30 @@ class HomeFragment : Fragment() {
         })
     }
 
+    // 🔍 Filtrar productos por nombre
+    private fun filtrarProductosPorNombre(nombre: String) {
+        val productosFiltrados = if (nombre.isNotEmpty()) {
+            listaProductos.filter { it.nombre.contains(nombre, ignoreCase = true) }
+        } else {
+            listaProductos
+        }
+        actualizarRecyclerView(productosFiltrados)
+    }
+
     private fun mostrarProductosFiltrados(categoriaId: Int?) {
         val productosFiltrados = if (categoriaId != null) {
             listaProductos.filter { it.categoria?.id == categoriaId }
         } else {
             listaProductos
         }
+        actualizarRecyclerView(productosFiltrados)
+    }
 
-        if (productosFiltrados.isEmpty()) {
-            Toast.makeText(requireContext(), "No hay productos en esta categoría", Toast.LENGTH_SHORT).show()
+    private fun actualizarRecyclerView(productos: List<Producto>) {
+        if (productos.isEmpty()) {
+            Toast.makeText(requireContext(), "No se encontraron productos.", Toast.LENGTH_SHORT).show()
         }
-        binding.recyclerView.adapter = ProductoAdapter(productosFiltrados, requireActivity().supportFragmentManager)
+        binding.recyclerView.adapter = ProductoAdapter(productos, requireActivity().supportFragmentManager)
     }
 
     override fun onDestroyView() {
