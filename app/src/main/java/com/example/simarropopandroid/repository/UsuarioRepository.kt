@@ -99,6 +99,19 @@ class UsuarioRepository(context: Context) {
         }
     }
 
+    suspend fun eliminarUsuario(userId: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = usuarioApi.eliminarUsuario(userId).awaitResponse()
+                response.isSuccessful
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+    }
+
+
 
 
 

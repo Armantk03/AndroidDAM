@@ -6,7 +6,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,9 +55,13 @@ class UsuarioFragment : Fragment() {
         binding.cardHacersePremium.setOnClickListener {
             mostrarAlertaPremium()
         }
+
+        // 🚨 CardView para eliminar cuenta
+        binding.cardEliminarCuenta.setOnClickListener {
+            mostrarAlertaEliminarCuenta()
+        }
     }
 
-    // 🔄 Cargar los datos del usuario y su valoración
     private fun cargarDatosUsuario() {
         val userId = sharedPreferences.getInt("userId", -1)
         if (userId != -1) {
@@ -77,14 +80,10 @@ class UsuarioFragment : Fragment() {
     private fun cargarValoracionUsuario(userId: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             val valoracion = usuarioRepository.obtenerValoracionUsuario(userId)
-            Log.d("USUARIO_FRAGMENT", "Valoración obtenida: $valoracion")
             binding.userRating.rating = valoracion
-            Toast.makeText(requireContext(), "Valoración obtenida: $valoracion", Toast.LENGTH_SHORT).show()
         }
     }
 
-
-    // 💳 Mostrar alerta para hacerse premium
     private fun mostrarAlertaPremium() {
         AlertDialog.Builder(requireContext())
             .setTitle("Hacerse Premium")
@@ -94,7 +93,6 @@ class UsuarioFragment : Fragment() {
             .show()
     }
 
-    // 🌟 Actualizar el estado premium usando el endpoint de valoración
     private fun actualizarPremiumConValoracion() {
         val userId = sharedPreferences.getInt("userId", -1)
         if (userId != -1) {
@@ -114,11 +112,35 @@ class UsuarioFragment : Fragment() {
         }
     }
 
-    // 🚪 Cerrar sesión
+    // 🚨 Alerta para eliminar cuenta
+    private fun mostrarAlertaEliminarCuenta() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Eliminar cuenta")
+            .setMessage("⚠ Esta acción eliminará tu cuenta permanentemente. ¿Estás seguro?")
+            .setPositiveButton("Sí, eliminar") { _, _ -> eliminarCuenta() }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    // 🗑 Lógica para eliminar cuenta
+    private fun eliminarCuenta() {
+        val userId = sharedPreferences.getInt("userId", -1)
+        if (userId != -1) {
+            CoroutineScope(Dispatchers.Main).launch {
+                val eliminado = usuarioRepository.eliminarUsuario(userId)
+                if (eliminado) {
+                    Toast.makeText(requireContext(), "Cuenta eliminada correctamente.", Toast.LENGTH_SHORT).show()
+                    cerrarSesion()
+                } else {
+                    Toast.makeText(requireContext(), "Error al eliminar la cuenta.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     private fun cerrarSesion() {
         sharedPreferences.edit().clear().apply()
-        val intent = Intent(requireActivity(), LoginActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(requireActivity(), LoginActivity::class.java))
         requireActivity().finish()
     }
 

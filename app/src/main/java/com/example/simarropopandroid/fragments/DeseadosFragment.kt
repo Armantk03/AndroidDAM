@@ -1,17 +1,17 @@
-package com.example.simarropopandroid.fragments
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simarropopandroid.adapters.ProductoDeseadoAdapter
 import com.example.simarropopandroid.databinding.FragmentDeseadosBinding
 import com.example.simarropopandroid.modelos.Producto
-import com.example.simarropopandroid.modelos.UsuarioApi
-import com.example.simarropopandroid.modelos.Categoria
-import com.example.simarropopandroid.modelos.UsuarioReferencia
+import com.example.simarropopandroid.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class DeseadosFragment : Fragment() {
 
@@ -28,24 +28,25 @@ class DeseadosFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // ✅ Usamos UsuarioApi, que solo contiene el ID
-        val usuarioEjemplo = UsuarioReferencia(id = 1)
-        val categoriaEjemplo = Categoria(id = 1, nombre = "Electrónica", descripcion = "Dispositivos y gadgets")
-
-        // ✅ Lista de productos deseados (simulación de API)
-        val productos = listOf(
-            Producto(id = 1, nombre = "Bicicleta", descripcion = "Bicicleta de segunda mano", antiguedad = 4, precio = 120, ubicacion = "Valencia", deseado = true, usuario = usuarioEjemplo, categoria = categoriaEjemplo, imagenUrl = "https://via.placeholder.com/150"),
-            Producto(id = 2, nombre = "Smartphone", descripcion = "Teléfono con 128GB de almacenamiento", antiguedad = 2, precio = 250, ubicacion = "Madrid", deseado = false, usuario = usuarioEjemplo, categoria = categoriaEjemplo, imagenUrl = "https://via.placeholder.com/150"),
-            Producto(id = 3, nombre = "Cámara", descripcion = "Cámara réflex profesional", antiguedad = 1, precio = 300, ubicacion = "Barcelona", deseado = true, usuario = usuarioEjemplo, categoria = categoriaEjemplo, imagenUrl = "https://via.placeholder.com/150")
-        )
-
-        // ✅ Filtrar solo los productos deseados
-        val productosDeseados = productos.filter { it.deseado }
-
-        // ✅ Configurar el RecyclerView
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView.adapter = ProductoDeseadoAdapter(productosDeseados)
+        cargarProductosDeseados()
+    }
+
+    private fun cargarProductosDeseados() {
+        RetrofitClient.instance.obtenerProductos().enqueue(object : Callback<List<Producto>> {
+            override fun onResponse(call: Call<List<Producto>>, response: Response<List<Producto>>) {
+                if (response.isSuccessful) {
+                    val productosDeseados = response.body()?.filter { it.deseado } ?: emptyList()
+                    binding.recyclerView.adapter = ProductoDeseadoAdapter(productosDeseados)
+                } else {
+                    Toast.makeText(requireContext(), " Error al cargar productos deseados", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<Producto>>, t: Throwable) {
+                Toast.makeText(requireContext(), " Error de conexión: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onDestroyView() {

@@ -1,4 +1,5 @@
-import DetalleProductoFragment
+package com.example.simarropopandroid.adapters
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.simarropopandroid.R
 import com.example.simarropopandroid.databinding.ItemProductoBinding
+import com.example.simarropopandroid.fragments.DetalleProductoFragment
 import com.example.simarropopandroid.modelos.Producto
 
 class ProductoAdapter(
@@ -22,6 +24,7 @@ class ProductoAdapter(
             binding.productName.text = producto.nombre
             binding.productPrice.text = "€${producto.precio}"
 
+            // 🌟 Cargar imagen desde Firebase Storage usando Glide
             Glide.with(binding.root.context)
                 .load(producto.imagenUrl ?: "https://via.placeholder.com/150")
                 .placeholder(R.drawable.ic_placeholder)
@@ -34,7 +37,7 @@ class ProductoAdapter(
                         putString("precio", producto.precio.toString())
                         putString("descripcion", producto.descripcion)
                         putString("imagenUrl", producto.imagenUrl)
-                        putString("ubicacion", producto.ubicacion)  // 📍 Añadimos la ubicación
+                        putString("ubicacion", producto.ubicacion)
                         putInt("idUsuario", producto.usuario.id)
                     }
                 }

@@ -1,6 +1,5 @@
 package com.example.simarropopandroid.fragments
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,11 +14,13 @@ import com.example.simarropopandroid.modelos.Categoria
 import com.example.simarropopandroid.modelos.Foto
 import com.example.simarropopandroid.modelos.Producto
 import com.example.simarropopandroid.network.RetrofitClient
-import com.example.simarropopandroid.modelos.UsuarioApi
 import com.example.simarropopandroid.modelos.UsuarioReferencia
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.UUID
 
 
 class AgregarProductoFragment : Fragment() {
@@ -34,6 +35,44 @@ class AgregarProductoFragment : Fragment() {
             imageUri = it
             binding.ivVistaPreviaImagen.setImageURI(it)
             binding.ivVistaPreviaImagen.visibility = View.VISIBLE
+        }
+    }
+
+    private fun guardarFoto(idProducto: Int) {
+        val storageReference = Firebase.storage.reference
+        val nombreArchivo = "productos/${UUID.randomUUID()}.jpg" // 🔄 Nombre único para cada imagen
+        val fotoRef = storageReference.child(nombreArchivo)
+
+        imageUri?.let { uri ->
+            val uploadTask = fotoRef.putFile(uri)
+            uploadTask.addOnSuccessListener {
+                // ✅ Imagen subida, obtenemos la URL
+                fotoRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    val fotoUrl = downloadUri.toString()
+                    val foto = Foto(
+                        url = fotoUrl,
+                        descripcio = "Imagen del producto"
+                    )
+
+                    // 🌐 Guardar la URL en la base de datos mediante el endpoint
+                    RetrofitClient.instance.registrarFoto(idProducto, foto).enqueue(object : Callback<Foto> {
+                        override fun onResponse(call: Call<Foto>, response: Response<Foto>) {
+                            if (response.isSuccessful) {
+                                Toast.makeText(requireContext(), "Producto y foto subidos exitosamente ✅", Toast.LENGTH_SHORT).show()
+                                requireActivity().supportFragmentManager.popBackStack()
+                            } else {
+                                Toast.makeText(requireContext(), " Error al guardar la foto en la API", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<Foto>, t: Throwable) {
+                            Toast.makeText(requireContext(), " Error al guardar foto: ${t.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+            }.addOnFailureListener {
+                Toast.makeText(requireContext(), "️ Error al subir la imagen a Firebase", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -124,30 +163,6 @@ class AgregarProductoFragment : Fragment() {
 
 
 
-    private fun guardarFoto(idProducto: Int) {
-        val fotoUrl = imageUri.toString() // Convertimos URI a String
-        val foto = Foto(
-            url = fotoUrl,
-            descripcio = "Imagen del producto"
-        )
-
-        RetrofitClient.instance.registrarFoto(idProducto, foto).enqueue(object : Callback<Foto> {
-            override fun onResponse(call: Call<Foto>, response: Response<Foto>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(requireContext(), "Producto y foto guardados correctamente", Toast.LENGTH_SHORT).show()
-                    requireActivity().supportFragmentManager.popBackStack()
-                } else {
-                    Toast.makeText(requireContext(), "Error al guardar la foto", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<Foto>, t: Throwable) {
-                Toast.makeText(requireContext(), "Error al guardar la foto: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
-
-
-    }
     private fun obtenerIdUsuario(): Int {
         val sharedPreferences = requireActivity().getSharedPreferences("UserSession", android.content.Context.MODE_PRIVATE)
         return sharedPreferences.getInt("userId", -1) // -1 si no hay valor

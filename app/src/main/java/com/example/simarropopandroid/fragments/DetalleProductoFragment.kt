@@ -1,39 +1,30 @@
+package com.example.simarropopandroid.fragments
+
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.simarropopandroid.databinding.FragmentDetalleProductoBinding
-import com.example.simarropopandroid.repository.UsuarioRepository
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import android.location.Geocoder
-import com.example.simarropopandroid.R
-import java.util.*
+import com.example.simarropopandroid.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class DetalleProductoFragment : Fragment(), OnMapReadyCallback {
+class DetalleProductoFragment : Fragment() {
 
     private var _binding: FragmentDetalleProductoBinding? = null
     private val binding get() = _binding!!
-    private lateinit var usuarioRepository: UsuarioRepository
-    private lateinit var mMap: GoogleMap
-    private var ubicacion: String? = null
+    private var isLiked = false
+    private var idProducto: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentDetalleProductoBinding.inflate(inflater, container, false)
-        usuarioRepository = UsuarioRepository(requireContext())
         return binding.root
     }
 
@@ -44,9 +35,7 @@ class DetalleProductoFragment : Fragment(), OnMapReadyCallback {
         val precio = arguments?.getString("precio")
         val descripcion = arguments?.getString("descripcion")
         val imagenUrl = arguments?.getString("imagenUrl")
-        ubicacion = arguments?.getString("ubicacion")
-
-        Log.d("DETALLE_PRODUCTO", "Ubicación recibida: $ubicacion")  // ✅ Verifica ubicación recibida
+        idProducto = arguments?.getInt("idProducto") ?: -1
 
         binding.productName.text = nombre
         binding.productPrice.text = "€$precio"
@@ -56,38 +45,40 @@ class DetalleProductoFragment : Fragment(), OnMapReadyCallback {
             Glide.with(this).load(it).into(binding.productImage)
         }
 
-        val mapFragment = childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        // ⭐ Cuando el usuario pulse el botón "Me gusta"
+        binding.btnLike.setOnClickListener {
+            isLiked = !isLiked
+            animarBotonLike(isLiked)
+            actualizarDeseado(idProducto, isLiked)
+        }
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        mostrarUbicacionEnMapa()
+    private fun animarBotonLike(like: Boolean) {
+        if (like) {
+            binding.btnLike.setMinAndMaxProgress(0f, 1f)
+            binding.btnLike.playAnimation()
+        } else {
+            binding.btnLike.cancelAnimation()
+            binding.btnLike.progress = 0f
+        }
     }
 
-    private fun mostrarUbicacionEnMapa() {
-        ubicacion?.let { direccion ->
-            Log.d("DETALLE_PRODUCTO", "Buscando coordenadas para: $direccion")  // ✅ Verificar dirección
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                    val resultado = geocoder.getFromLocationName(direccion, 1)
-                    if (resultado?.isNotEmpty() == true) {
-                        val ubicacionLatLng = LatLng(resultado[0].latitude, resultado[0].longitude)
-                        Log.d("DETALLE_PRODUCTO", "Coordenadas obtenidas: $ubicacionLatLng")  // ✅ Coordenadas obtenidas
-                        CoroutineScope(Dispatchers.Main).launch {
-                            mMap.addMarker(MarkerOptions().position(ubicacionLatLng).title("Ubicación del producto"))
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionLatLng, 15f))
-                        }
+    private fun actualizarDeseado(idProducto: Int, esDeseado: Boolean) {
+        RetrofitClient.instance.actualizarDeseado(idProducto, esDeseado)
+            .enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        val mensaje = if (esDeseado) "💚 Producto añadido a deseados" else "💔 Producto eliminado de deseados"
+                        Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show()
                     } else {
-                        Log.e("DETALLE_PRODUCTO", "❌ No se encontraron coordenadas para: $direccion")
+                        Toast.makeText(requireContext(), "❌ Error al actualizar estado: ${response.code()}", Toast.LENGTH_SHORT).show()
                     }
-                } catch (e: Exception) {
-                    Log.e("DETALLE_PRODUCTO", "🚨 Error al obtener ubicación: ${e.message}")
-                    e.printStackTrace()
                 }
-            }
-        } ?: Log.e("DETALLE_PRODUCTO", "❌ Ubicación es null")
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(requireContext(), "🚨 Error de red: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
     override fun onDestroyView() {

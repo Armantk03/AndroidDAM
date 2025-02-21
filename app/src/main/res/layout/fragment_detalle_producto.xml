@@ -45,6 +45,20 @@
             android:text="Descripción del producto..."
             android:textSize="16sp"
             android:layout_marginTop="12dp" />
+        <!-- Botón "Me gusta" con animación Lottie -->
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/btnLike"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:lottie_rawRes="@raw/favorite"
+            app:lottie_loop="false"
+            app:lottie_autoPlay="false"
+            android:contentDescription="Me gusta" />
 
         <!-- Mini Map -->
         <fragment

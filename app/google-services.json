@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "687149318180",
+    "project_id": "simarropoandroid",
+    "storage_bucket": "simarropoandroid.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687149318180:android:cb6a4a44d0afffe00658b1",
+        "android_client_info": {
+          "package_name": "com.example.simarropopandroid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzBvv5eBT6KAIQ7kop6FSGTTgaabsgcaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

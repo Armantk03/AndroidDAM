@@ -102,7 +102,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="¿No tienes una cuenta? Regístrate"
-        android:textColor="@color/green_dark"
+        android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginTop="20dp"

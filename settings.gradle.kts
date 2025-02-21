@@ -11,14 +11,15 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT) // ✅ Permite repos en build.gradle.kts
     repositories {
         google()
         mavenCentral()
+        jcenter() // Solo si realmente lo necesitas
     }
 }
 
 rootProject.name = "SimarroPopAndroid"
 include(":app")
- 

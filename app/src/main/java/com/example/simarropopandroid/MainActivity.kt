@@ -1,5 +1,6 @@
 package com.example.simarropopandroid
 
+import DeseadosFragment
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -13,6 +14,8 @@ import com.example.simarropopandroid.databinding.FragmentHomeBinding
 import com.example.simarropopandroid.fragments.*
 import com.example.simarropopandroid.repository.UsuarioRepository
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,11 +28,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+// 🔥 Probar la conexión a Firebase Storage
+        val storage = Firebase.storage
+        println("✅ Firebase Storage inicializado: $storage")
         // Inicializar ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         _binding = FragmentHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         // Descargar y guardar usuarios en Room al iniciar
         CoroutineScope(Dispatchers.IO).launch {

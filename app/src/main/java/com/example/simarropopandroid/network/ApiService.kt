@@ -15,7 +15,7 @@ interface ApiService {
     @GET("categorias")
     fun obtenerCategorias(): Call<List<Categoria>>
 
-    @POST("productos")
+    @POST("productos/registrar")
     fun registrarProducto(@Body producto: Producto): Call<Producto>
 
     @POST("fotos/producto/{idProducto}")
@@ -30,6 +30,14 @@ interface ApiService {
     @GET("valoraciones/{idUsuario}")
     fun obtenerValoracion(@Path("idUsuario") idUsuario: Int): Call<ValoracionResponse>
 
+    @PUT("productos")
+    fun modificarProducto(@Body producto: Producto): Call<Producto>
+
+    @PUT("productos/{id}/actualizarDeseado")
+    fun actualizarDeseado(
+        @Path("id") idProducto: Int,
+        @Query("deseado") deseado: Boolean
+    ): Call<Void>
 
 
 

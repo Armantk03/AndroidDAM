@@ -5,6 +5,7 @@ import com.example.simarropopandroid.modelos.UsuarioApi
 import com.example.simarropopandroid.modelos.ValoracionResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -36,6 +37,10 @@ interface UsuarioApi {
 
     @GET("valoraciones/{idUsuario}")
     fun obtenerValoracion(@Path("idUsuario") idUsuario: Int): Call<List<ValoracionApi>>
+
+    @DELETE("usuarios/{id}")
+    fun eliminarUsuario(@Path("id") id: Int): Call<Void>
+
 
 
 

@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="@color/white">
+    android:background="@drawable/fondohome">
 
-    <!-- Barra de búsqueda -->
+    <!-- 🔍 Barra de búsqueda -->
     <EditText
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
@@ -17,9 +17,29 @@
         android:background="@drawable/rounded_background"
         android:drawableStart="@drawable/ic_search"
         android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
+        android:textColor="@color/black"
+        android:layout_marginBottom="8dp" />
 
-    <!-- RecyclerView para mostrar los productos -->
+    <!-- 🎯 Contenedor para botones de categorías -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:layout_marginBottom="8dp">
+
+        <LinearLayout
+            android:id="@+id/categoriasContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:gravity="center_horizontal"
+            android:background="@color/green_dark">
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- 🖼 RecyclerView para mostrar los productos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -27,9 +47,9 @@
         android:layout_weight="1"
         android:scrollbars="vertical"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"/> <!-- 2 columnas para estilo Grid -->
+        app:spanCount="2" />
 
-    <!-- Floating Action Button (centrado horizontalmente abajo) -->
+    <!-- ➕ Floating Action Button (centrado horizontalmente abajo) -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -44,5 +64,4 @@
             android:tint="@color/white"
             android:backgroundTint="@color/green_dark" />
     </FrameLayout>
-
 </LinearLayout>
