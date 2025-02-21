@@ -7,4 +7,14 @@
     <string name="navigation_drawer_open">Abrir menú</string>
     <string name="navigation_drawer_close">Cerrar menú</string>
 
+    <string-array name="language_options">
+        <item>Español</item>
+        <item>Inglés</item>
+    </string-array>
+    <string-array name="language_values">
+        <item>es</item>
+        <item>en</item>
+    </string-array>
+
+
 </resources>

@@ -16,5 +16,9 @@
             android:id="@+id/nav_deseados"
             android:icon="@drawable/ic_heart"
             android:title="Deseados" />
+        <item
+            android:id="@+id/nav_settings"
+
+        android:title="Ajustes" />
     </group>
 </menu>

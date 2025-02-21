@@ -79,10 +79,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_home -> replaceFragment(HomeFragment(), "Inicio")
             R.id.nav_usuario -> replaceFragment(UsuarioFragment(), "Usuario")
             R.id.nav_deseados -> replaceFragment(DeseadosFragment(), "Deseados")
+            R.id.nav_settings -> replaceFragment(SettingsFragment(), "Ajustes") // ⚡ Nuevo fragmento de ajustes
         }
-        binding.drawerLayout.closeDrawer(GravityCompat.START) // Cerrar el menú lateral
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+
 
     // Reemplazar fragmentos
     private fun replaceFragment(fragment: Fragment, title: String) {
